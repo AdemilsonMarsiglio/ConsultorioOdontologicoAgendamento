@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -229,14 +230,21 @@ public class AgendamentoMain extends JPanel {
     private final JButton btnDeletar = new JButton(Imagens.IMG_DELETE);
 
     private void criaNavigatorBar() {
-        JPanel pnlNavigation = new JPanel(new GridBagLayout());
+        
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
 
         btnIncluir.setToolTipText("Incluir");
         btnAlterar.setToolTipText("Alterar");
         btnSalvar.setToolTipText("Salvar");
         btnCancelar.setToolTipText("Cancelar");
         btnDeletar.setToolTipText("Excluir");
-        
+
+        btnIncluir.setBorderPainted(false);
+        btnAlterar.setBorderPainted(false);
+        btnSalvar.setBorderPainted(false);
+        btnCancelar.setBorderPainted(false);
+        btnDeletar.setBorderPainted(false);
         
         btnIncluir.addActionListener(new ActionListener() {
 
@@ -277,49 +285,13 @@ public class AgendamentoMain extends JPanel {
             }
         });
 
-        GridBagConstraints gridBagConstraints;
-        
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
-        pnlNavigation.add(btnIncluir, gridBagConstraints);
-        
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 1, 0, 0);
-        pnlNavigation.add(btnAlterar, gridBagConstraints);
-        
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 1, 0, 0);
-        pnlNavigation.add(btnDeletar, gridBagConstraints);
-        
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 1, 0, 0);
-        pnlNavigation.add(btnSalvar, gridBagConstraints);
-        
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 1, 0, 0);
-        pnlNavigation.add(btnCancelar, gridBagConstraints);
-        
-        this.add(BorderLayout.SOUTH, pnlNavigation);
+        toolBar.add(btnIncluir);
+        toolBar.add(btnAlterar);
+        toolBar.add(btnDeletar);
+        toolBar.add(btnSalvar);
+        toolBar.add(btnCancelar);
+
+        this.add(BorderLayout.SOUTH, toolBar);
     }
     
     private void refreshRendererToCells() {

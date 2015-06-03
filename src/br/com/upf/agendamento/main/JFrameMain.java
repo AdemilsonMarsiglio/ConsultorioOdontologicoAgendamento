@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package br.com.upf.agendamento.control.util;
+package br.com.upf.agendamento.main;
 
 import br.com.parcerianet.view.padroes.JPFramePrincipal;
-import br.com.upf.agendamento.view.AgendamentoForm;
+import br.com.upf.agendamento.model.util.HibernateUtil;
 import br.com.upf.agendamento.view.AgendamentoMain;
 import br.com.upf.agendamento.view.PacienteMain;
 import br.com.upf.agendamento.view.imagens.Imagens;
@@ -18,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -26,10 +20,9 @@ import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 /**
  *
@@ -57,16 +50,15 @@ public class JFrameMain extends JFrame {
           }
         });
         
-        btnAgenda.setContentAreaFilled(false);
-        btnPaciente.setContentAreaFilled(false);
+        btnAgenda.setBorderPainted(false);
+        btnPaciente.setBorderPainted(false);
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
-        pnlFavoritos = new javax.swing.JPanel();
+        toolBar = new javax.swing.JToolBar();
         btnPaciente = new javax.swing.JButton();
         btnAgenda = new javax.swing.JButton();
         desktopPane = new JDesktopPane(){
@@ -85,7 +77,8 @@ public class JFrameMain extends JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        pnlFavoritos.setLayout(new java.awt.GridBagLayout());
+        toolBar.setFloatable(false);
+        toolBar.setRollover(true);
 
         btnPaciente.setIcon(Imagens.IMG_PEOPLE);
         btnPaciente.setToolTipText("Paciente");
@@ -95,9 +88,7 @@ public class JFrameMain extends JFrame {
                 btnPacienteActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        pnlFavoritos.add(btnPaciente, gridBagConstraints);
+        toolBar.add(btnPaciente);
 
         btnAgenda.setIcon(Imagens.IMG_NOTEBOOK);
         btnAgenda.setToolTipText("Agenda");
@@ -107,12 +98,9 @@ public class JFrameMain extends JFrame {
                 btnAgendaActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.weightx = 1.1;
-        pnlFavoritos.add(btnAgenda, gridBagConstraints);
+        toolBar.add(btnAgenda);
 
-        getContentPane().add(pnlFavoritos, java.awt.BorderLayout.NORTH);
+        getContentPane().add(toolBar, java.awt.BorderLayout.NORTH);
 
         desktopPane.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -124,7 +112,7 @@ public class JFrameMain extends JFrame {
         );
         desktopPaneLayout.setVerticalGroup(
             desktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addGap(0, 270, Short.MAX_VALUE)
         );
 
         getContentPane().add(desktopPane, java.awt.BorderLayout.CENTER);
@@ -251,11 +239,6 @@ public class JFrameMain extends JFrame {
         return (JFrame) getFrames()[0];
     }
     
-    private static Component getSelectedInternalFrame(){
-        return desktopPane.getSelectedFrame();
-    }
-    
-    
     private void acaoSair(){
         
         if (desktopPane.getAllFrames().length != 0) {
@@ -280,6 +263,12 @@ public class JFrameMain extends JFrame {
     private javax.swing.JMenu menuItemRelatorios;
     private javax.swing.JMenuItem menuItemSair;
     private javax.swing.JMenu menuItemSistema;
-    private javax.swing.JPanel pnlFavoritos;
+    private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        HibernateUtil.getSession();
+        new JFrameMain().setVisible(true);
+    }
 }
