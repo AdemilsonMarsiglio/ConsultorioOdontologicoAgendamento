@@ -1,5 +1,6 @@
 package br.com.upf.agendamento.view;
 
+import br.com.upf.agendamento.view.util.NavigatorBar;
 import br.com.parcerianet.utilcomp.containers.JPScrollPane;
 import br.com.upf.agendamento.control.basico.AgendamentoCon;
 import br.com.upf.agendamento.control.basico.PacienteCon;
@@ -28,7 +29,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -50,10 +50,11 @@ public class PacienteMain extends JPanel {
     private final String CONSULTA = "1";
     private final String FORMULARIO = "2";
 
-    PacienteCon pacienteCon = new PacienteCon();
+    private PacienteCon pacienteCon = new PacienteCon();
 
-    PacienteForm pacienteForm = new PacienteForm();
+    private PacienteForm pacienteForm = new PacienteForm();
 
+    private NavigatorBar navigatorBar;
     JPanel pnlCentralizador = new JPanel(new CardLayout());
 
     public PacienteMain() {
@@ -64,7 +65,6 @@ public class PacienteMain extends JPanel {
         criaNavigatorBar();
 
         setVisiblePanel(CONSULTA);
-        setEnableBtnNavigation(true);
     }
 
     private void criaCardPane() {
@@ -97,7 +97,9 @@ public class PacienteMain extends JPanel {
                 super.mouseClicked(me);
 
                 if (me.getClickCount() == 2) {
-                    alterar();
+                    if (alterar()) {
+                        navigatorBar.setEnableBtnNavigation(false);
+                    }
                 }
             }
         });
@@ -143,11 +145,11 @@ public class PacienteMain extends JPanel {
             });
         } else if (cbxTipoBusca.getSelectedItem().equals("Nome")) {
             pacienteCon.setCriterions(new Object[]{
-                new Object[]{"this", Restrictions.ilike("nmPaciente", txfCampoBusca.getText(), MatchMode.START)}
+                new Object[]{"this", Restrictions.ilike("nmPaciente", txfCampoBusca.getText(), MatchMode.ANYWHERE)}
             });
         } else if (cbxTipoBusca.getSelectedItem().equals("Cidade")) {
             pacienteCon.setCriterions(new Object[]{
-                new Object[]{"this", Restrictions.ilike("cidade", txfCampoBusca.getText(), MatchMode.START)}
+                new Object[]{"this", Restrictions.ilike("cidade", txfCampoBusca.getText(), MatchMode.ANYWHERE)}
             });
         }
 
@@ -216,75 +218,36 @@ public class PacienteMain extends JPanel {
         return pnlSearch;
     }
 
-    private final JButton btnIncluir = new JButton(Imagens.IMG_ADD);
-    private final JButton btnAlterar = new JButton(Imagens.IMG_EDIT);
-    private final JButton btnSalvar = new JButton(Imagens.IMG_SAVE);
-    private final JButton btnCancelar = new JButton(Imagens.IMG_CANCEL);
-    private final JButton btnDeletar = new JButton(Imagens.IMG_DELETE);
-
     private void criaNavigatorBar() {
-        
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-
-        btnIncluir.setToolTipText("Incluir");
-        btnAlterar.setToolTipText("Alterar");
-        btnSalvar.setToolTipText("Salvar");
-        btnCancelar.setToolTipText("Cancelar");
-        btnDeletar.setToolTipText("Excluir");
-
-        btnIncluir.setBorderPainted(false);
-        btnAlterar.setBorderPainted(false);
-        btnSalvar.setBorderPainted(false);
-        btnCancelar.setBorderPainted(false);
-        btnDeletar.setBorderPainted(false);
-        
-        btnIncluir.addActionListener(new ActionListener() {
+        navigatorBar = new NavigatorBar() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                incluir();
+            public boolean incluir_() {
+                return incluir();
             }
-        });
-
-        btnCancelar.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                cancelar();
+            public boolean alterar_() {
+                return alterar();
             }
-        });
-
-        btnAlterar.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                alterar();
+            public boolean salvar_() {
+                return salvar();
             }
-        });
-
-        btnSalvar.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                salvar();
-            }
-        });
-        btnDeletar.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void deletar_() {
                 deletar();
             }
-        });
 
-        toolBar.add(btnIncluir);
-        toolBar.add(btnAlterar);
-        toolBar.add(btnDeletar);
-        toolBar.add(btnSalvar);
-        toolBar.add(btnCancelar);
+            @Override
+            public void cancelar_() {
+                cancelar();
+            }
+        };
 
-        this.add(BorderLayout.SOUTH, toolBar);
+        this.add(BorderLayout.SOUTH, navigatorBar);
     }
 
     private void refreshRendererToCells() {
@@ -316,29 +279,27 @@ public class PacienteMain extends JPanel {
         colQuatro.setPreferredWidth((25 * sizeArea.width) / 100);
     }
 
-    private void incluir() {
+    private boolean incluir() {
         acao = 'I';
-
-        setEnableBtnNavigation(false);
 
         setVisiblePanel(FORMULARIO);
         populaDadosFormulario("", null, AtivoInativo.A, "", "", "", "", "", "", "");
+
+        return true;
     }
 
-    private void alterar() {
+    private boolean alterar() {
         acao = 'A';
 
         if (table.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(this, "Nenhum item Selecionado");
-            return;
+            return false;
         }
 
         if (table.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "É necessário ter itens na consulta.");
-            return;
+            return false;
         }
-
-        setEnableBtnNavigation(false);
 
         idPaciente = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
 
@@ -355,18 +316,19 @@ public class PacienteMain extends JPanel {
 
         setVisiblePanel(FORMULARIO);
 
+        return true;
     }
 
-    private void salvar() {
+    private boolean salvar() {
 
         if (!incluirAlterar()) {
-            return;
+            return false;
         }
 
-        setEnableBtnNavigation(true);
         setVisiblePanel(CONSULTA);
         atualizaTabela();
 
+        return true;
     }
 
     private void deletar() {
@@ -403,7 +365,6 @@ public class PacienteMain extends JPanel {
     }
 
     private void cancelar() {
-        setEnableBtnNavigation(true);
         setVisiblePanel(CONSULTA);
     }
 
@@ -473,13 +434,4 @@ public class PacienteMain extends JPanel {
 
         return true;
     }
-
-    private void setEnableBtnNavigation(boolean enable) {
-        btnIncluir.setEnabled(enable);
-        btnAlterar.setEnabled(enable);
-        btnDeletar.setEnabled(enable);
-        btnCancelar.setEnabled(!enable);
-        btnSalvar.setEnabled(!enable);
-    }
-
 }

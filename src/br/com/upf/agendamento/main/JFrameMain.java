@@ -1,10 +1,12 @@
 package br.com.upf.agendamento.main;
 
 import br.com.parcerianet.view.padroes.JPFramePrincipal;
-import br.com.upf.agendamento.model.util.HibernateUtil;
 import br.com.upf.agendamento.view.AgendamentoMain;
 import br.com.upf.agendamento.view.PacienteMain;
+import br.com.upf.agendamento.view.SobreForm;
 import br.com.upf.agendamento.view.imagens.Imagens;
+import br.com.upf.agendamento.view.util.StatusBar;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -17,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -52,6 +55,8 @@ public class JFrameMain extends JFrame {
         
         btnAgenda.setBorderPainted(false);
         btnPaciente.setBorderPainted(false);
+        
+        this.add(BorderLayout.SOUTH,new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.0  "));
     }
 
     @SuppressWarnings("unchecked")
@@ -74,6 +79,8 @@ public class JFrameMain extends JFrame {
         itemMenuPaciente = new javax.swing.JMenuItem();
         itemMenuAgenda = new javax.swing.JMenuItem();
         menuItemRelatorios = new javax.swing.JMenu();
+        menuAjud = new javax.swing.JMenu();
+        menuItemSobre = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -152,6 +159,18 @@ public class JFrameMain extends JFrame {
         menuItemRelatorios.setText("Relatórios");
         jMenuBar1.add(menuItemRelatorios);
 
+        menuAjud.setText("Ajuda");
+
+        menuItemSobre.setText("Sobre");
+        menuItemSobre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSobreActionPerformed(evt);
+            }
+        });
+        menuAjud.add(menuItemSobre);
+
+        jMenuBar1.add(menuAjud);
+
         setJMenuBar(jMenuBar1);
 
         pack();
@@ -176,6 +195,16 @@ public class JFrameMain extends JFrame {
     private void btnAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgendaActionPerformed
         criaInternalFrame("Agendamento", new AgendamentoMain(), new Dimension(800, 600));
     }//GEN-LAST:event_btnAgendaActionPerformed
+
+    private void menuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSobreActionPerformed
+        JDialog dlgSobre = new JDialog(getFramePrincipal(), "Sobre");
+        dlgSobre.add(new SobreForm());
+        dlgSobre.setSize(800, 600);
+        dlgSobre.setModal(true);
+        dlgSobre.setResizable(false);
+        dlgSobre.setLocationRelativeTo(null);
+        dlgSobre.setVisible(true);
+    }//GEN-LAST:event_menuItemSobreActionPerformed
 
     //** Localização do próximo internalFrame
     private  int nextFrameX=0;
@@ -259,16 +288,17 @@ public class JFrameMain extends JFrame {
     private javax.swing.JMenuItem itemMenuAgenda;
     private javax.swing.JMenuItem itemMenuPaciente;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu menuAjud;
     private javax.swing.JMenu menuItemPrograma;
     private javax.swing.JMenu menuItemRelatorios;
     private javax.swing.JMenuItem menuItemSair;
     private javax.swing.JMenu menuItemSistema;
+    private javax.swing.JMenuItem menuItemSobre;
     private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        HibernateUtil.getSession();
         new JFrameMain().setVisible(true);
     }
 }

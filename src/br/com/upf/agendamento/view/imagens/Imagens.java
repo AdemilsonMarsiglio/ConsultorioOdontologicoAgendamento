@@ -282,5 +282,6 @@ public interface Imagens {
    public final ImageIcon IMG_PEOPLE = new ImageIcon(Imagens.class.getResource("people.png"));
    public final ImageIcon IMG_NOTEBOOK = new ImageIcon(Imagens.class.getResource("notebook.png"));
    public final ImageIcon IMG_DIARY = new ImageIcon(Imagens.class.getResource("diary.png"));
+   public final ImageIcon IMG_DEV = new ImageIcon(Imagens.class.getResource("dev.jpg"));
 
 }
