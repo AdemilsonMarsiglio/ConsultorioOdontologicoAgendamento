@@ -1,6 +1,8 @@
 package br.com.upf.agendamento.model.util;
 
 import br.com.parcerianet.generic.modelo.util.controls.Bean;
+import br.com.parcerianet.generic.modelo.util.controls.ObjectBean;
+import br.com.parcerianet.generic.modelo.util.controls.OrderBy;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.ArrayList;

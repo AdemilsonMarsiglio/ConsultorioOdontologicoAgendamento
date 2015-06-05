@@ -21,7 +21,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="menuItemPrograma">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Programa"/>
+            <Property name="text" type="java.lang.String" value="Programas"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="itemMenuPaciente">

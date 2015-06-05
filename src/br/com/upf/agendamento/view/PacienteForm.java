@@ -3,7 +3,7 @@ package br.com.upf.agendamento.view;
 import br.com.parcerianet.utilcomp.components.formatacao.JFormattedCepField;
 import br.com.parcerianet.utilcomp.components.formatacao.JFormattedCpfCnpjField;
 import br.com.parcerianet.utilcomp.components.formatacao.LimitaTextField;
-import br.com.upf.agendamento.model.basico.enums.AtivoInativo;
+import br.com.upf.agendamento.model.basico.enums.AtivoInativoPendende;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -123,7 +123,7 @@ public class PacienteForm extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 25, 0, 0);
         pnlDadosCliente.add(lblCbxStPaciente, gridBagConstraints);
 
-        cbxSituacao.setModel(new DefaultComboBoxModel(AtivoInativo.values()));
+        cbxSituacao.setModel(new DefaultComboBoxModel(AtivoInativoPendende.values()));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;

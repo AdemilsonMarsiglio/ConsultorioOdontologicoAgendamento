@@ -1,6 +1,6 @@
 package br.com.upf.agendamento.model.basico;
 
-import br.com.upf.agendamento.model.basico.enums.AtivoInativo;
+import br.com.upf.agendamento.model.basico.enums.AtivoInativoPendende;
 import java.beans.Beans;
 import java.io.Serializable;
 import java.util.Date;
@@ -61,7 +61,7 @@ public class Paciente extends Beans implements Serializable{
     
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char")
-    private AtivoInativo stCliente = AtivoInativo.A;
+    private AtivoInativoPendende stCliente = AtivoInativoPendende.A;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date dtCadastro;
@@ -138,11 +138,11 @@ public class Paciente extends Beans implements Serializable{
         this.cidade = cidade;
     }
 
-    public AtivoInativo getStCliente() {
+    public AtivoInativoPendende getStCliente() {
         return stCliente;
     }
 
-    public void setStCliente(AtivoInativo stCliente) {
+    public void setStCliente(AtivoInativoPendende stCliente) {
         this.stCliente = stCliente;
     }
 

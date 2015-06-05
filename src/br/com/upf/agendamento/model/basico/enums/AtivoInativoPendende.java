@@ -4,12 +4,12 @@ package br.com.upf.agendamento.model.basico.enums;
  *
  * @author Ademilsom
  */
-public enum AtivoInativo {
-    A("ativo"), I("inativo");
+public enum AtivoInativoPendende {
+    A("ativo"), I("inativo"), P("pendente");
     
     private String enumeration;
     
-    private AtivoInativo(String enumeration){
+    private AtivoInativoPendende(String enumeration){
         this.enumeration = enumeration;
     }
 

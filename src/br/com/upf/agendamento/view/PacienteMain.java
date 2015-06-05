@@ -5,10 +5,11 @@ import br.com.parcerianet.utilcomp.containers.JPScrollPane;
 import br.com.upf.agendamento.control.basico.AgendamentoCon;
 import br.com.upf.agendamento.control.basico.PacienteCon;
 import br.com.upf.agendamento.model.basico.Paciente;
-import br.com.upf.agendamento.model.basico.enums.AtivoInativo;
+import br.com.upf.agendamento.model.basico.enums.AtivoInativoPendende;
 import br.com.upf.agendamento.view.imagens.Imagens;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -113,21 +114,25 @@ public class PacienteMain extends JPanel {
     }
 
     private void atualizaTabela() {
+        
+        
         if (table.getModel() != null) {
             table.setModel(new DefaultTableModel());
         }
 
         List<Paciente> listPaciente = pacienteCon.getLista();
         int i = 0;
-        Object[][] dados = new Object[listPaciente.size()][4];
+        Object[][] dados = new Object[listPaciente.size()][5];
+        
         for (Paciente paciente : listPaciente) {
             dados[i][0] = paciente.getIdPaciente();
             dados[i][1] = paciente.getNmPaciente();
             dados[i][2] = paciente.getFone();
-            dados[i++][3] = paciente.getCidade();
+            dados[i][3] = paciente.getCidade();
+            dados[i++][4] = paciente.getStCliente();
         }
-
-        table.setModel(new DefaultTableModel(dados, new Object[]{"Código", "Nome", "Fone", "Cidade"}));
+        
+        table.setModel(new DefaultTableModel(dados, new Object[]{"Código", "Nome", "Fone", "Cidade", "Situação"}));
 
         refreshRendererToCells();
     }
@@ -259,31 +264,38 @@ public class PacienteMain extends JPanel {
 
         DefaultTableCellRenderer alignCenter = new DefaultTableCellRenderer();
         alignCenter.setHorizontalAlignment(JLabel.CENTER);
+        
+        //** Alinhamento colorido
+        TableCellRendererColor color = new TableCellRendererColor(JLabel.CENTER);
 
         ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
         ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setPreferredSize(new Dimension(100, 25));
 
         int column = 0;
         TableColumn colUm = table.getColumnModel().getColumn(column++);
-        colUm.setPreferredWidth((15 * sizeArea.width) / 100);
+        colUm.setPreferredWidth((10 * sizeArea.width) / 100);
         colUm.setCellRenderer(alignDireita);
 
         TableColumn colDois = table.getColumnModel().getColumn(column++);
         colDois.setPreferredWidth((40 * sizeArea.width) / 100);
 
         TableColumn colTres = table.getColumnModel().getColumn(column++);
-        colTres.setPreferredWidth((20 * sizeArea.width) / 100);
+        colTres.setPreferredWidth((15 * sizeArea.width) / 100);
         colTres.setCellRenderer(alignCenter);
 
         TableColumn colQuatro = table.getColumnModel().getColumn(column++);
         colQuatro.setPreferredWidth((25 * sizeArea.width) / 100);
+        
+        TableColumn colCinco = table.getColumnModel().getColumn(column++);
+        colCinco.setPreferredWidth((10 * sizeArea.width) / 100);
+        colCinco.setCellRenderer(color);
     }
-
+    
     private boolean incluir() {
         acao = 'I';
 
         setVisiblePanel(FORMULARIO);
-        populaDadosFormulario("", null, AtivoInativo.A, "", "", "", "", "", "", "");
+        populaDadosFormulario("", null, AtivoInativoPendende.A, "", "", "", "", "", "", "");
 
         return true;
     }
@@ -374,7 +386,7 @@ public class PacienteMain extends JPanel {
 
     }
 
-    private void populaDadosFormulario(String nome, Date dtDtNacimento, AtivoInativo situacao, String fone, String CPF,
+    private void populaDadosFormulario(String nome, Date dtDtNacimento, AtivoInativoPendende situacao, String fone, String CPF,
             String logradouro, String numero, String bairro, String CEP, String cidade) {
 
         pacienteForm.getTxfNome().setText(nome);
@@ -420,7 +432,7 @@ public class PacienteMain extends JPanel {
 
         pacienteCon.getObjeto().setNmPaciente(pacienteForm.getTxfNome().getText());
         pacienteCon.getObjeto().setDtNascimento(pacienteForm.getJdcNascimento().getDate());
-        pacienteCon.getObjeto().setStCliente((AtivoInativo) pacienteForm.getCbxSituacao().getSelectedItem());
+        pacienteCon.getObjeto().setStCliente((AtivoInativoPendende) pacienteForm.getCbxSituacao().getSelectedItem());
         pacienteCon.getObjeto().setFone(pacienteForm.getTxfFone().getText());
         pacienteCon.getObjeto().setCpf(pacienteForm.getTxfCPF().getText());
 
@@ -433,5 +445,39 @@ public class PacienteMain extends JPanel {
         pacienteCon.gravar();
 
         return true;
+    }
+
+    class TableCellRendererColor extends DefaultTableCellRenderer {
+
+        public TableCellRendererColor(int alinhamento) {
+            setHorizontalAlignment(alinhamento);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            //**Pega o componente do super
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            Object stPendente = table.getValueAt(row, 4);
+            
+            if (stPendente != null) {
+                if (stPendente.equals(AtivoInativoPendende.A)) {
+                    setIcon(Imagens.IMG_ATIVO);
+                    setText("");
+                    setToolTipText(AtivoInativoPendende.A.toString());
+                } else if (stPendente.equals(AtivoInativoPendende.I)) {
+                    setIcon(Imagens.IMG_INATIVO);
+                    setText("");
+                    setToolTipText(AtivoInativoPendende.I.toString());
+                } else if (stPendente.equals(AtivoInativoPendende.P)) {
+                    setIcon(Imagens.IMG_PENDENTE);
+                    setText("");
+                    setToolTipText(AtivoInativoPendende.P.toString());
+                }
+            }
+            return c;
+        }
     }
 }

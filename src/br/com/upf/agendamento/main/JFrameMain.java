@@ -1,5 +1,6 @@
 package br.com.upf.agendamento.main;
 
+import br.com.parcerianet.utilcomp.Util;
 import br.com.parcerianet.view.padroes.JPFramePrincipal;
 import br.com.upf.agendamento.view.AgendamentoMain;
 import br.com.upf.agendamento.view.PacienteMain;
@@ -10,22 +11,31 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 /**
  *
@@ -41,22 +51,26 @@ public class JFrameMain extends JFrame {
     public JFrameMain() {
         initComponents();
 
-        setExtendedState(JFrame.MAXIMIZED_BOTH);   
-        
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+
         this.setTitle("Agendamento de Pacietes");
         this.setIconImage(Imagens.IMG_DIARY.getImage());
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
-          @Override
-          public void windowClosing(WindowEvent ev) {
-              acaoSair();
-          }
+            @Override
+            public void windowClosing(WindowEvent ev) {
+                acaoSair();
+            }
         });
-        
+
         btnAgenda.setBorderPainted(false);
         btnPaciente.setBorderPainted(false);
-        
-        this.add(BorderLayout.SOUTH,new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.0  "));
+        toolBar.addSeparator();
+
+        //** 1 -> Layout todo do sistema.
+        //** 2 -> Funcionalidades Visiveis.
+        //** 3 -> Funcionalidades/Correções.
+        this.add(BorderLayout.SOUTH, new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.2.2  "));
     }
 
     @SuppressWarnings("unchecked")
@@ -136,7 +150,7 @@ public class JFrameMain extends JFrame {
 
         jMenuBar1.add(menuItemSistema);
 
-        menuItemPrograma.setText("Programa");
+        menuItemPrograma.setText("Programas");
 
         itemMenuPaciente.setText("Paciente");
         itemMenuPaciente.addActionListener(new java.awt.event.ActionListener() {
@@ -207,26 +221,18 @@ public class JFrameMain extends JFrame {
     }//GEN-LAST:event_menuItemSobreActionPerformed
 
     //** Localização do próximo internalFrame
-    private  int nextFrameX=0;
-    private  int nextFrameY=0;
-    private  int frameDistance=0;
-    
-    
+    private int nextFrameX = 0;
+    private int nextFrameY = 0;
+    private int frameDistance = 0;
+
     private void criaInternalFrame(String title, Component component, Dimension size) {
-        
+
         JInternalFrame[] allFrames = desktopPane.getAllFrames();
-        
-        for (JInternalFrame internalFrame : allFrames) {
-            if(internalFrame.getTitle().equals(title)){
-                try {
-                    internalFrame.setSelected(true);
-                } catch (PropertyVetoException ex) {
-                    Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                return;
-            }
+
+        if (buscaInternalFrame(title)) {
+            return;
         }
-        
+
         //** Testa existe algum JInternalFrame Selecionado..
         if (allFrames.length > 0 && allFrames[0].isSelected()) {
             nextFrameY = allFrames[0].getY() + frameDistance;
@@ -242,16 +248,30 @@ public class JFrameMain extends JFrame {
             nextFrameX = 0;
         }
 
-        
-        JInternalFrame internalFrame = new JInternalFrame(title, true, true, true, true);
+        JInternalFrame internalFrame = new JInternalFrame(title, true, true, true, true) {
+
+            @Override
+            public boolean isSelected() {
+                boolean selected = super.isSelected();
+
+                if (selected) {
+                    renameButton(this, "<html><body><b>" + this.getTitle() + "</b></body></html>");
+                } else {
+                    renameButton(this, "<html><body>" + this.getTitle() + "</body></html>");
+                }
+
+                return selected;
+
+            }
+        };
         internalFrame.add(component);
-        
+
         desktopPane.add(internalFrame);
-        
+
         internalFrame.setSize(size);
         internalFrame.reshape(nextFrameX, nextFrameY, size.width, size.height);
         internalFrame.setMinimumSize(size);
-        
+
         Container contnerNewFrame = internalFrame.getContentPane();
 
         if (frameDistance == 0) {
@@ -259,20 +279,123 @@ public class JFrameMain extends JFrame {
         }
         nextFrameX += frameDistance;
         nextFrameY += frameDistance;
-        
+
         internalFrame.setOpaque(true);
         internalFrame.setVisible(true);
+
+        internalFrame.addInternalFrameListener(new InternalFrameAdapter() {
+
+            @Override
+            public void internalFrameClosed(InternalFrameEvent e) {
+                super.internalFrameClosed(e);
+
+                for (Component component : toolBar.getComponents()) {
+                    if (component instanceof JButton) {
+                        JButton button = ((JButton) component);
+                        if (button.getName() != null) {
+                            if (button.getName().equals(((JInternalFrame) e.getSource()).getTitle())) {
+                                toolBar.remove(button);
+                                toolBar.repaint();
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+
+        criaBotaoLink(title);
     }
-    
-    public static JFrame getFramePrincipal(){
+
+    private void renameButton(JInternalFrame internalFrame, String name) {
+
+        for (Component component : toolBar.getComponents()) {
+            if (component instanceof JButton) {
+                JButton button = ((JButton) component);
+                if (button.getName() != null) {
+                    if (button.getName().equals(internalFrame.getTitle())) {
+                        button.setText(name);
+                        toolBar.repaint();
+                    }
+                }
+            }
+        }
+
+    }
+
+    private boolean buscaInternalFrame(String title) {
+
+        JInternalFrame[] allFrames = desktopPane.getAllFrames();
+
+        for (JInternalFrame internalFrame : allFrames) {
+            if (internalFrame.getTitle().equals(title)) {
+                try {
+                    internalFrame.setSelected(true);
+                    return true;
+                } catch (PropertyVetoException ex) {
+                    Logger.getLogger(JFrameMain.class.getName()).log(Level.SEVERE, null, ex);
+                    return false;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    private void criaBotaoLink(final String title) {
+        //** Cria um novo botão que será adicionado ao toolBar
+        JButton btnToolBar = new JButton();
+        //** Seta propriedades do Botão
+        btnToolBar.setText("<html><body>" + title + "</body></html>");
+        btnToolBar.setFont(new Font(Util.NM_DEFAULT_FONT, 0, 10));
+        btnToolBar.setForeground(Color.BLACK);
+        btnToolBar.setName(title);
+        btnToolBar.setIcon(Imagens.IMG_WINDOW);
+        btnToolBar.setBorderPainted(false);
+        btnToolBar.setFocusPainted(false);
+        btnToolBar.setContentAreaFilled(false);
+        btnToolBar.setMargin(new Insets(2, 2, 2, 2));
+        btnToolBar.setHorizontalAlignment(JLabel.LEFT);
+        btnToolBar.setLayout(new BorderLayout());
+        btnToolBar.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent evt) {
+                JButton btnSource = ((JButton) evt.getSource());
+                btnSource.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            public void mouseClicked(MouseEvent ev) {
+                buscaInternalFrame(title);
+            }
+        });
+        //** Pega as dimensões de btnToolBar
+        Dimension dimensaoBotao = btnToolBar.getPreferredSize();
+        //** Adiciona btnClose ao btnToolBar
+//        btnToolBar.add(internalFrame.getButtonClose(), BorderLayout.EAST);
+        //** Seta as novas dimensões para btnToolBar, após adição de btnclose
+        dimensaoBotao.setSize(dimensaoBotao.getWidth() + 24, dimensaoBotao.getHeight());
+        btnToolBar.setPreferredSize(dimensaoBotao);
+
+        //** Adiciona o Botão ao ToolBar
+        toolBar.add(btnToolBar, toolBar.getComponents().length);
+        toolBar.revalidate();
+
+        //** Atualiza o valor total = a soma das dimensões dos botões adicionados no toolBar
+        tamanhoButtons = tamanhoButtons + (int) btnToolBar.getPreferredSize().getWidth();
+    }
+
+    private int tamanhoButtons = 0;
+
+    public static JFrame getFramePrincipal() {
         return (JFrame) getFrames()[0];
     }
-    
-    private void acaoSair(){
-        
+
+    private void acaoSair() {
+
         if (desktopPane.getAllFrames().length != 0) {
             int resp = JOptionPane.showConfirmDialog(this, "Deseja encerrar a aplicação?", "Sair", JOptionPane.YES_NO_OPTION);
-            
+
             if (resp == JOptionPane.YES_OPTION) {
                 System.exit(0);
             }

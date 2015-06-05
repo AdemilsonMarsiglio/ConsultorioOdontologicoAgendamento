@@ -4,7 +4,7 @@ import javax.swing.ImageIcon;
 
 /**
  *
- * @author jean
+ * @author Ademilson
  */
 public interface Imagens {
   public final ImageIcon IMG_FIRST = new ImageIcon(Imagens.class.getResource("primeiro.png"));
@@ -247,7 +247,7 @@ public interface Imagens {
    public final ImageIcon IMG_CONTINGENCIA = new ImageIcon(Imagens.class.getResource("nfe-doccontingencia.png"));
    public final ImageIcon IMG_DENEGADA = new ImageIcon(Imagens.class.getResource("nfe-docdenegado.png"));
    public final ImageIcon IMG_INUTILIZADA = new ImageIcon(Imagens.class.getResource("nfe-docinutilizado.png"));
-   public final ImageIcon IMG_PENDENTE = new ImageIcon(Imagens.class.getResource("nfe-docpendente.png"));
+//   public final ImageIcon IMG_PENDENTE = new ImageIcon(Imagens.class.getResource("nfe-docpendente.png"));
    public final ImageIcon IMG_REJEITADA =new ImageIcon(Imagens.class.getResource("nfe-docrejeitado.png"));
    public final ImageIcon IMG_EMCANCELAMENTO = new  ImageIcon(Imagens.class.getResource("nfe-docemcancelamento.png"));
    public final ImageIcon IMG_APURACAIICMS = new ImageIcon(Imagens.class.getResource("apuraicms.png"));
@@ -283,5 +283,6 @@ public interface Imagens {
    public final ImageIcon IMG_NOTEBOOK = new ImageIcon(Imagens.class.getResource("notebook.png"));
    public final ImageIcon IMG_DIARY = new ImageIcon(Imagens.class.getResource("diary.png"));
    public final ImageIcon IMG_DEV = new ImageIcon(Imagens.class.getResource("dev.jpg"));
+   public final ImageIcon IMG_PENDENTE = new ImageIcon(Imagens.class.getResource("pendente.png"));
 
 }

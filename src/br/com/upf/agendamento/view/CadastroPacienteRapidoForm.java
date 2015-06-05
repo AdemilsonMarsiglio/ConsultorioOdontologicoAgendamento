@@ -3,6 +3,7 @@ package br.com.upf.agendamento.view;
 import br.com.parcerianet.utilcomp.components.formatacao.LimitaTextField;
 import br.com.upf.agendamento.control.basico.PacienteCon;
 import br.com.upf.agendamento.model.basico.Paciente;
+import br.com.upf.agendamento.model.basico.enums.AtivoInativoPendende;
 import br.com.upf.agendamento.view.imagens.Imagens;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -151,6 +152,7 @@ public class CadastroPacienteRapidoForm extends javax.swing.JPanel {
         pacienteCon.incluir();
         pacienteCon.getObjeto().setNmPaciente(txfNomePaciente.getText());
         pacienteCon.getObjeto().setFone(txfFone.getText());
+        pacienteCon.getObjeto().setStCliente(AtivoInativoPendende.P);
         pacienteCon.gravar();
         
         paciente = pacienteCon.getObjeto();
