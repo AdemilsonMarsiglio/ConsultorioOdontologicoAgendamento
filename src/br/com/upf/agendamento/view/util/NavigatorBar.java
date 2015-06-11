@@ -24,6 +24,7 @@ public abstract class NavigatorBar extends JPanel {
     private final JButton btnSalvar = new JButton(Imagens.IMG_SAVE);
     private final JButton btnCancelar = new JButton(Imagens.IMG_CANCEL);
     private final JButton btnDeletar = new JButton(Imagens.IMG_DELETE);
+    private final JButton btnImprimir = new JButton(Imagens.IMG_PRINT);
 
     public NavigatorBar() {
         setLayout(new BorderLayout());
@@ -42,12 +43,14 @@ public abstract class NavigatorBar extends JPanel {
         btnSalvar.setToolTipText("Salvar");
         btnCancelar.setToolTipText("Cancelar");
         btnDeletar.setToolTipText("Excluir");
+        btnImprimir.setToolTipText("Imprimir");
 
         btnIncluir.setBorderPainted(false);
         btnAlterar.setBorderPainted(false);
         btnSalvar.setBorderPainted(false);
         btnCancelar.setBorderPainted(false);
         btnDeletar.setBorderPainted(false);
+        btnImprimir.setBorderPainted(false);
 
         btnIncluir.addActionListener(new ActionListener() {
 
@@ -94,12 +97,21 @@ public abstract class NavigatorBar extends JPanel {
                 deletar_();
             }
         });
+        
+        btnImprimir.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                imprimir_();
+            }
+        });
 
         toolBar.add(btnIncluir);
         toolBar.add(btnAlterar);
         toolBar.add(btnDeletar);
         toolBar.add(btnSalvar);
         toolBar.add(btnCancelar);
+        toolBar.add(btnImprimir);
 
         return toolBar;
     }
@@ -108,6 +120,7 @@ public abstract class NavigatorBar extends JPanel {
         btnIncluir.setEnabled(enable);
         btnAlterar.setEnabled(enable);
         btnDeletar.setEnabled(enable);
+        btnImprimir.setEnabled(enable);
         btnCancelar.setEnabled(!enable);
         btnSalvar.setEnabled(!enable);
     }
@@ -121,5 +134,7 @@ public abstract class NavigatorBar extends JPanel {
     public abstract void deletar_();
 
     public abstract void cancelar_();
+    
+    public abstract void imprimir_();
 
 }

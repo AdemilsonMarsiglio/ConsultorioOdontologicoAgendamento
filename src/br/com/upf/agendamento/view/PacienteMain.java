@@ -1,5 +1,6 @@
 package br.com.upf.agendamento.view;
 
+import br.com.parcerianet.generic.modelo.util.controls.OrderBy;
 import br.com.upf.agendamento.view.util.NavigatorBar;
 import br.com.parcerianet.utilcomp.containers.JPScrollPane;
 import br.com.upf.agendamento.control.basico.AgendamentoCon;
@@ -7,6 +8,7 @@ import br.com.upf.agendamento.control.basico.PacienteCon;
 import br.com.upf.agendamento.model.basico.Paciente;
 import br.com.upf.agendamento.model.basico.enums.AtivoInativoPendende;
 import br.com.upf.agendamento.view.imagens.Imagens;
+import br.com.upf.agendamento.view.util.relatorios.VisualizarRelJasper;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -35,6 +37,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -250,6 +253,11 @@ public class PacienteMain extends JPanel {
             public void cancelar_() {
                 cancelar();
             }
+
+            @Override
+            public void imprimir_() {
+                imprimir();
+            }
         };
 
         this.add(BorderLayout.SOUTH, navigatorBar);
@@ -379,11 +387,19 @@ public class PacienteMain extends JPanel {
     private void cancelar() {
         setVisiblePanel(CONSULTA);
     }
+    
+    private void imprimir(){
+        pacienteCon.setOrderByClause(new OrderBy[]{
+            new OrderBy(Order.asc("cidade")),
+            new OrderBy(Order.asc("nmPaciente"))
+        });
+        
+        new VisualizarRelJasper(pacienteCon.getLista(), getClass(), null, "PacienteMain", false, pacienteCon.getResourceBundle(), "Consultorio Odontológico", "Controle de Agendamento", "Desenvolvedor", "Sistema de Agendamento de Pacientes", "Passo Fundo", Imagens.IMG_DIARY.getImage(), "Relatório de Pacientes").action();
+    }
 
     private void setVisiblePanel(String panel) {
         CardLayout card = (CardLayout) pnlCentralizador.getLayout();
         card.show(pnlCentralizador, panel);
-
     }
 
     private void populaDadosFormulario(String nome, Date dtDtNacimento, AtivoInativoPendende situacao, String fone, String CPF,

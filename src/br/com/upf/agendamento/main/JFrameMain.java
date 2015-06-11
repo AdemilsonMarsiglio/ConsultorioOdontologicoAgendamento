@@ -2,6 +2,7 @@ package br.com.upf.agendamento.main;
 
 import br.com.parcerianet.utilcomp.Util;
 import br.com.parcerianet.view.padroes.JPFramePrincipal;
+import static br.com.parcerianet.view.padroes.JPFramePrincipal.getResourceBundle;
 import br.com.upf.agendamento.view.AgendamentoMain;
 import br.com.upf.agendamento.view.PacienteMain;
 import br.com.upf.agendamento.view.SobreForm;
@@ -16,6 +17,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -30,12 +33,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 
 /**
  *
@@ -70,7 +75,7 @@ public class JFrameMain extends JFrame {
         //** 1 -> Layout todo do sistema.
         //** 2 -> Funcionalidades Visiveis.
         //** 3 -> Funcionalidades/Correções.
-        this.add(BorderLayout.SOUTH, new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.2.2  "));
+        this.add(BorderLayout.SOUTH, new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.3.3  "));
     }
 
     @SuppressWarnings("unchecked")
@@ -220,12 +225,77 @@ public class JFrameMain extends JFrame {
         dlgSobre.setVisible(true);
     }//GEN-LAST:event_menuItemSobreActionPerformed
 
-    //** Localização do próximo internalFrame
-    private int nextFrameX = 0;
-    private int nextFrameY = 0;
-    private int frameDistance = 0;
+//    public static void criaDialogRelatorio(String title, Component component) {
+//
+//
+//        JInternalFrame[] allFrames = desktopPane.getAllFrames();
+//        //** Testa existe algum JInternalFrame Selecionado..
+//        int frameY = 0, frameX = 0;
+//        Dimension tamanho = new Dimension(790, 470);
+//        if (allFrames.length > 0 && allFrames[0].isSelected()) {
+//            frameY = allFrames[0].getY() + 100;
+//            frameX = allFrames[0].getX() + 100;
+//            if (frameX + tamanho.width > desktopPane.getWidth()) {
+//                frameX = 0;
+//            }
+//            if (frameY + tamanho.height > desktopPane.getHeight()) {
+//                frameY = 0;
+//            }
+//        }
+//
+//        JInternalFrame jifRel = new JInternalFrame(title, true, true, true, true);
+//        jifRel.setName("R:" + title);
+//        jifRel.setLayout(new BorderLayout());
+//        jifRel.add(component, BorderLayout.CENTER);
+//        jifRel.reshape(frameX, frameY, tamanho.width, tamanho.height);
+//        desktopPane.add(jifRel);
+//
+//        //**Adiciona Listener para o internalFrame
+//        jifRel.addInternalFrameListener(new InternalFrameListener() {
+//            public void internalFrameOpened(InternalFrameEvent evt) {
+//            }
+//
+//            public void internalFrameIconified(InternalFrameEvent evt) {
+//            }
+//
+//            public void internalFrameDeiconified(InternalFrameEvent evt) {
+//            }
+//
+//            public void internalFrameDeactivated(InternalFrameEvent evt) {
+//            }
+//
+//            public void internalFrameClosing(InternalFrameEvent evt) {
+//            }
+//
+//            //** Chamado depois que o internalFrame é fechado
+//
+//            public void internalFrameClosed(InternalFrameEvent evt) {
+//                for (int i = 0; i < mniWinRel.getItemCount(); i++) {
+//                    String nameInternalFrame = ((JInternalFrame) evt.getSource()).getName();
+//                    if (mniWinRel.getItem(i).getName().equals(nameInternalFrame)) {
+//                        mniWinRel.remove(mniWinRel.getItem(i));
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            //** Chamado quando a janela se torna ativa
+//
+//            public void internalFrameActivated(InternalFrameEvent evt) {
+//            }
+//        });
+//
+//        
+//        jifRel.setVisible(true);
+//
+//    }
 
-    private void criaInternalFrame(String title, Component component, Dimension size) {
+    //** Localização do próximo internalFrame
+    private static int nextFrameX = 0;
+    private static int nextFrameY = 0;
+    private static int frameDistance = 0;
+
+    public static void criaInternalFrame(String title, Component component, Dimension size) {
 
         JInternalFrame[] allFrames = desktopPane.getAllFrames();
 
@@ -307,7 +377,7 @@ public class JFrameMain extends JFrame {
         criaBotaoLink(title);
     }
 
-    private void renameButton(JInternalFrame internalFrame, String name) {
+    private static void renameButton(JInternalFrame internalFrame, String name) {
 
         for (Component component : toolBar.getComponents()) {
             if (component instanceof JButton) {
@@ -323,7 +393,7 @@ public class JFrameMain extends JFrame {
 
     }
 
-    private boolean buscaInternalFrame(String title) {
+    private static boolean buscaInternalFrame(String title) {
 
         JInternalFrame[] allFrames = desktopPane.getAllFrames();
 
@@ -343,7 +413,7 @@ public class JFrameMain extends JFrame {
         return false;
     }
 
-    private void criaBotaoLink(final String title) {
+    private static void criaBotaoLink(final String title) {
         //** Cria um novo botão que será adicionado ao toolBar
         JButton btnToolBar = new JButton();
         //** Seta propriedades do Botão
@@ -385,7 +455,7 @@ public class JFrameMain extends JFrame {
         tamanhoButtons = tamanhoButtons + (int) btnToolBar.getPreferredSize().getWidth();
     }
 
-    private int tamanhoButtons = 0;
+    private static int tamanhoButtons = 0;
 
     public static JFrame getFramePrincipal() {
         return (JFrame) getFrames()[0];
@@ -417,7 +487,7 @@ public class JFrameMain extends JFrame {
     private javax.swing.JMenuItem menuItemSair;
     private javax.swing.JMenu menuItemSistema;
     private javax.swing.JMenuItem menuItemSobre;
-    private javax.swing.JToolBar toolBar;
+    private static javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {

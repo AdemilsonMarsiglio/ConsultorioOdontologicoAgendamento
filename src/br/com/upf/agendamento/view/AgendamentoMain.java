@@ -1,5 +1,6 @@
 package br.com.upf.agendamento.view;
 
+import br.com.parcerianet.generic.modelo.util.controls.OrderBy;
 import br.com.upf.agendamento.view.util.NavigatorBar;
 import br.com.parcerianet.util.ParseDate;
 import br.com.parcerianet.utilcomp.containers.JPScrollPane;
@@ -8,6 +9,7 @@ import br.com.upf.agendamento.model.basico.Agendamento;
 import br.com.upf.agendamento.model.basico.Paciente;
 import br.com.upf.agendamento.view.imagens.Imagens;
 import br.com.upf.agendamento.view.util.StatusBar;
+import br.com.upf.agendamento.view.util.relatorios.VisualizarRelJasper;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -37,6 +39,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.jdesktop.swingx.JXDatePicker;
@@ -57,7 +60,7 @@ public class AgendamentoMain extends JPanel {
 
     private AgendamentoCon agendamentoCon = new AgendamentoCon();
     private AgendamentoForm agendamentoForm = new AgendamentoForm();
-    
+
     private NavigatorBar navigatorBar;
 
     JPanel pnlCentralizador = new JPanel(new CardLayout());
@@ -72,6 +75,11 @@ public class AgendamentoMain extends JPanel {
 
         agendamentoCon.setCriterions(new Object[]{
             new Object[]{"this", Restrictions.ge("dtAgendamento", new Date())}
+        });
+        
+        agendamentoCon.setDefaultOrderBy(new OrderBy[]{
+            new OrderBy(Order.asc("dtAgendamento")),
+            new OrderBy(Order.asc("hrInicio")),
         });
 
         criaCardPane();
@@ -332,19 +340,25 @@ public class AgendamentoMain extends JPanel {
 
         idAgedamento = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
 
-        AgendamentoCon agendamentoConAlterar = new AgendamentoCon();
-        agendamentoConAlterar.setJoin(agendamentoCon.getJoin());
-        agendamentoConAlterar.setCriterions(new Object[]{
-            new Object[]{"this", Restrictions.eq("idAgendamento", idAgedamento)}
-        });
+        if (agendamentoCon.localizar(idAgedamento)) {
+            
+            Agendamento agendamento = agendamentoCon.getObjeto();
+            
+            Date dtInicio = getDataFormatada(agendamento.getHrInicio(), agendamento.getDtAgendamento());
 
-        Agendamento agendamento = agendamentoConAlterar.getLista().get(0);
+            if (new Date().after(dtInicio)) {
+                JOptionPane.showMessageDialog(this, "Não é possivel alterar este horário. Pois o mesmo já passou da hora agendada.", "Aviso", 2);
+                return false;
+            }
 
-        populaDadosFormulario(agendamento.getPaciente(), agendamento.getDtAgendamento(), agendamento.getHrInicio(), agendamento.getHrFim(), agendamento.getObsAgendamento());
+            populaDadosFormulario(agendamento.getPaciente(), agendamento.getDtAgendamento(), agendamento.getHrInicio(), agendamento.getHrFim(), agendamento.getObsAgendamento());
 
-        setVisiblePanel(FORMULARIO);
+            setVisiblePanel(FORMULARIO);
 
-        return true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean salvar() {
@@ -375,10 +389,20 @@ public class AgendamentoMain extends JPanel {
         if (resp == JOptionPane.YES_OPTION) {
             idAgedamento = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
 
-            agendamentoCon.localizar(idAgedamento);
-            agendamentoCon.excluir();
+            boolean localizou = agendamentoCon.localizar(idAgedamento);
 
-            atualizaTabela();
+            if (localizou) {
+                Date dtInicio = getDataFormatada(agendamentoCon.getObjeto().getHrInicio(), agendamentoCon.getObjeto().getDtAgendamento());
+            
+                if(new Date().after(dtInicio)){
+                    JOptionPane.showMessageDialog(this, "Não é possivel excluir este horário. Pois o mesmo já passou da hora agendada.", "Aviso", 2);
+                    return;
+                }
+                
+                agendamentoCon.excluir();
+
+                atualizaTabela();
+            }
         }
     }
 
@@ -467,28 +491,27 @@ public class AgendamentoMain extends JPanel {
 
     private boolean hrInicioMenorHrFim(String hrInicio, String hrFim, Date dtAgendamento) {
 
-        int horaInicio = parseStringToInt(hrInicio.substring(0, 2));
-        int minutoInicio = parseStringToInt(hrInicio.substring(3, 5));
+        Date dtInicio = getDataFormatada(hrInicio, dtAgendamento);
+        Date dtFim = getDataFormatada(hrFim, dtAgendamento);
 
-        int horaFim = parseStringToInt(hrFim.substring(0, 2));
-        int minutoFim = parseStringToInt(hrFim.substring(3, 5));
-
-        Calendar hrInicioC = Calendar.getInstance();
-        hrInicioC.setTime(dtAgendamento);
-        hrInicioC.set(Calendar.HOUR_OF_DAY, horaInicio);
-        hrInicioC.set(Calendar.MINUTE, minutoInicio);
-
-        Calendar hrFimC = Calendar.getInstance();
-        hrFimC.setTime(dtAgendamento);
-        hrFimC.set(Calendar.HOUR_OF_DAY, horaFim);
-        hrFimC.set(Calendar.MINUTE, minutoFim);
-
-        if (hrFimC.before(hrInicioC)) {
+        if (dtFim.before(dtInicio)) {
             JOptionPane.showMessageDialog(this, "A Hora de fim não pode ser menor que a de inicio.");
             return false;
         }
 
         return true;
+    }
+
+    private Date getDataFormatada(String horaMinuto, Date dtAgendamento) {
+        int horaInicio = parseStringToInt(horaMinuto.substring(0, 2));
+        int minutoInicio = parseStringToInt(horaMinuto.substring(3, 5));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dtAgendamento);
+        calendar.set(Calendar.HOUR_OF_DAY, horaInicio);
+        calendar.set(Calendar.MINUTE, minutoInicio);
+
+        return calendar.getTime();
     }
 
     private int parseStringToInt(String value) {
@@ -539,9 +562,8 @@ public class AgendamentoMain extends JPanel {
 
 //        statusBar = new StatusBar(0, 0);
 //        pnlInferior.add(BorderLayout.SOUTH, statusBar);
-        
         criaNavigatorBar();
-        
+
         pnlInferior.add(BorderLayout.CENTER, navigatorBar);
 
         this.add(BorderLayout.SOUTH, pnlInferior);
@@ -574,7 +596,16 @@ public class AgendamentoMain extends JPanel {
             public void cancelar_() {
                 cancelar();
             }
+
+            @Override
+            public void imprimir_() {
+                imprimir();
+            }
         };
+    }
+
+    private void imprimir() {
+        new VisualizarRelJasper(agendamentoCon.getLista(), getClass(), null, "AgendamentoMain", false, agendamentoCon.getResourceBundle(), "Consultorio Odontológico", "Controle de Agendamento", "Desenvolvedor", "Sistema de Agendamento de Pacientes", "Passo Fundo", Imagens.IMG_DIARY.getImage(), "Relatório de Agendamentos").action();
     }
 
 }

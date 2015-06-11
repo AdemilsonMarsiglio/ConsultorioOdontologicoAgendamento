@@ -99,15 +99,15 @@ public class JFormattedHora extends JFormattedTextField {
 
                 textField.setText(horaFormatada + minutoFormatado);
             }
-
-            private String parseIntToString(int value) {
-                return String.valueOf(value);
-            }
-
-            private int parseStringToInt(String value) {
-                return Integer.parseInt(value);
-            }
         });
+    }
+
+    private String parseIntToString(int value) {
+        return String.valueOf(value);
+    }
+
+    private int parseStringToInt(String value) {
+        return Integer.parseInt(value);
     }
 
     public int getHora() {
@@ -117,8 +117,23 @@ public class JFormattedHora extends JFormattedTextField {
     public int getMinuto() {
         return minutoField;
     }
-    
-    public void setHoraField(int hora, int minuto){
-        setText(hora + ":" + minuto);
+
+    public void setHoraField(int hora, int minuto) {
+
+        String horaFormatada = "";
+        String minutoFormatado = "";
+
+        if (hora < 9) {
+            horaFormatada = "0" + parseIntToString(hora);
+        } else {
+            horaFormatada = parseIntToString(hora);
+        }
+
+        if (minuto < 9) {
+            minutoFormatado = "0" + parseIntToString(minuto);
+        } else {
+            minutoFormatado = parseIntToString(minuto);
+        }
+        setText(horaFormatada + ":" + minutoFormatado);
     }
 }
