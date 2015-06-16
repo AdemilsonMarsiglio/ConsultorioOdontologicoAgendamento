@@ -79,6 +79,11 @@ public class Paciente extends Beans implements Serializable{
     }
 
     public void setNmPaciente(String nmPaciente) {
+        
+        if(nmPaciente.isEmpty()){
+            nmPaciente = null;
+        }
+        
         this.nmPaciente = nmPaciente;
     }
 

@@ -2,7 +2,6 @@ package br.com.upf.agendamento.main;
 
 import br.com.parcerianet.utilcomp.Util;
 import br.com.parcerianet.view.padroes.JPFramePrincipal;
-import static br.com.parcerianet.view.padroes.JPFramePrincipal.getResourceBundle;
 import br.com.upf.agendamento.view.AgendamentoMain;
 import br.com.upf.agendamento.view.PacienteMain;
 import br.com.upf.agendamento.view.SobreForm;
@@ -17,8 +16,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -33,14 +30,12 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 /**
  *
@@ -75,7 +70,7 @@ public class JFrameMain extends JFrame {
         //** 1 -> Layout todo do sistema.
         //** 2 -> Funcionalidades Visiveis.
         //** 3 -> Funcionalidades/Correções.
-        this.add(BorderLayout.SOUTH, new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.3.3  "));
+        this.add(BorderLayout.SOUTH, new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.3.4  "));
     }
 
     @SuppressWarnings("unchecked")
