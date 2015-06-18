@@ -127,6 +127,7 @@ public class AgendamentoMain extends JPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        table.setAutoCreateRowSorter(true);
 
         table.setRowHeight(26);
         atualizaTabela();

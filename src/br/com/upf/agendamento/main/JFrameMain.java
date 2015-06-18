@@ -2,7 +2,10 @@ package br.com.upf.agendamento.main;
 
 import br.com.parcerianet.utilcomp.Util;
 import br.com.parcerianet.view.padroes.JPFramePrincipal;
+import br.com.parcerianet.view.util.containers.JPDialog;
+import br.com.parcerianet.view.util.containers.JPInternalFrame;
 import br.com.upf.agendamento.view.AgendamentoMain;
+import br.com.upf.agendamento.view.ConsultaMain;
 import br.com.upf.agendamento.view.PacienteMain;
 import br.com.upf.agendamento.view.SobreForm;
 import br.com.upf.agendamento.view.imagens.Imagens;
@@ -70,7 +73,7 @@ public class JFrameMain extends JFrame {
         //** 1 -> Layout todo do sistema.
         //** 2 -> Funcionalidades Visiveis.
         //** 3 -> Funcionalidades/Correções.
-        this.add(BorderLayout.SOUTH, new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.3.4  "));
+        this.add(BorderLayout.SOUTH, new StatusBar("  SISTEMA DE AGENDAMENTO DE PACIENTES", "VERSÃO 1.3.5  "));
     }
 
     @SuppressWarnings("unchecked")
@@ -93,6 +96,7 @@ public class JFrameMain extends JFrame {
         itemMenuPaciente = new javax.swing.JMenuItem();
         itemMenuAgenda = new javax.swing.JMenuItem();
         menuItemRelatorios = new javax.swing.JMenu();
+        itemMenuRelAgendamentoPaciente = new javax.swing.JMenuItem();
         menuAjud = new javax.swing.JMenu();
         menuItemSobre = new javax.swing.JMenuItem();
 
@@ -171,6 +175,15 @@ public class JFrameMain extends JFrame {
         jMenuBar1.add(menuItemPrograma);
 
         menuItemRelatorios.setText("Relatórios");
+
+        itemMenuRelAgendamentoPaciente.setText("Agendamento de Pacientes");
+        itemMenuRelAgendamentoPaciente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemMenuRelAgendamentoPacienteActionPerformed(evt);
+            }
+        });
+        menuItemRelatorios.add(itemMenuRelAgendamentoPaciente);
+
         jMenuBar1.add(menuItemRelatorios);
 
         menuAjud.setText("Ajuda");
@@ -219,6 +232,10 @@ public class JFrameMain extends JFrame {
         dlgSobre.setLocationRelativeTo(null);
         dlgSobre.setVisible(true);
     }//GEN-LAST:event_menuItemSobreActionPerformed
+
+    private void itemMenuRelAgendamentoPacienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemMenuRelAgendamentoPacienteActionPerformed
+        criaInternalFrame("Relatório de Agendamento de Pacientes", new ConsultaMain(), new Dimension(800,600));
+    }//GEN-LAST:event_itemMenuRelAgendamentoPacienteActionPerformed
 
 //    public static void criaDialogRelatorio(String title, Component component) {
 //
@@ -468,6 +485,10 @@ public class JFrameMain extends JFrame {
             System.exit(0);
         }
     }
+    
+    public static Component getSelectedWindow() {
+        return desktopPane.getSelectedFrame();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgenda;
@@ -475,6 +496,7 @@ public class JFrameMain extends JFrame {
     private static javax.swing.JDesktopPane desktopPane;
     private javax.swing.JMenuItem itemMenuAgenda;
     private javax.swing.JMenuItem itemMenuPaciente;
+    private javax.swing.JMenuItem itemMenuRelAgendamentoPaciente;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu menuAjud;
     private javax.swing.JMenu menuItemPrograma;
